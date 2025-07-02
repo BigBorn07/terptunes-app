@@ -291,15 +291,81 @@ app.use((req, res, next) => {
       // Don't throw error to prevent process exit
     });
 
-    // Frontend integration
-    if (process.env.NODE_ENV === "production") {
-      app.use(express.static("dist/public"));
-    } else {
-      // Development mode - integrate with Vite
-      const { createViteDevServer } = await import('./vite-dev-server');
-      const vite = await createViteDevServer();
-      app.use(vite.middlewares);
-    }
+    // Serve frontend - simple static serving for now
+    app.use(express.static("client/public"));
+    
+    // Handle SPA routing - send index.html for non-API routes
+    app.get("*", (req, res, next) => {
+      if (req.path.startsWith("/api/")) {
+        return next();
+      }
+      
+      // For now, serve a simple HTML page
+      res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>TerpTunes - Cannabis Music Experience</title>
+            <script src="https://cdn.tailwindcss.com"></script>
+          </head>
+          <body>
+            <div class="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+              <div class="container mx-auto px-6 py-12">
+                <div class="text-center text-white">
+                  <h1 class="text-6xl font-bold mb-6">
+                    Terp<span class="text-green-400">Tunes</span>
+                  </h1>
+                  <p class="text-xl mb-8 max-w-2xl mx-auto">
+                    Where cannabis meets music. Generate personalized Spotify playlists based on terpene profiles and strain effects.
+                  </p>
+                  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+                      Get Started
+                    </button>
+                    <button class="border border-white hover:bg-white hover:text-gray-900 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+                      Learn More
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="mt-20 grid md:grid-cols-3 gap-8 text-white">
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span class="text-2xl">🌿</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Strain Analysis</h3>
+                    <p>Analyze terpene profiles and effects of your favorite cannabis strains</p>
+                  </div>
+                  
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span class="text-2xl">🎵</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Music Matching</h3>
+                    <p>AI-powered algorithm matches strain effects to musical characteristics</p>
+                  </div>
+                  
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span class="text-2xl">🎧</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Spotify Integration</h3>
+                    <p>Automatically create and save playlists to your Spotify account</p>
+                  </div>
+                </div>
+                
+                <div class="mt-20 text-center text-white">
+                  <p class="text-lg mb-4">Server Status: <span class="text-green-400">✅ Running</span></p>
+                  <p class="text-sm opacity-75">Backend API available at /api/* endpoints</p>
+                </div>
+              </div>
+            </div>
+          </body>
+        </html>
+      `);
+    });
 
     // ALWAYS serve the app on port 5000
     // this serves both the API and the client.

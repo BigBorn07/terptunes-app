@@ -1,4 +1,15 @@
-import { db, MemoryStorage } from "./storage";
+import { db } from "./db";
+
+class MemoryStorage {
+  async getStrains() {
+    try {
+      const result = await db.query("SELECT * FROM strains LIMIT 1");
+      return result.rows;
+    } catch (error) {
+      return [];
+    }
+  }
+}
 
 export async function initializeDatabase({ skipSeeding = false }: { skipSeeding?: boolean } = {}) {
   try {
