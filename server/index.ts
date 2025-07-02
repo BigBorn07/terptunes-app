@@ -291,12 +291,14 @@ app.use((req, res, next) => {
       // Don't throw error to prevent process exit
     });
 
-    // Static file serving for frontend
+    // Frontend integration
     if (process.env.NODE_ENV === "production") {
-      app.use(express.static("dist"));
+      app.use(express.static("dist/public"));
     } else {
-      // Development mode - serve static files
-      app.use(express.static("client/dist"));
+      // Development mode - integrate with Vite
+      const { createViteDevServer } = await import('./vite-dev-server');
+      const vite = await createViteDevServer();
+      app.use(vite.middlewares);
     }
 
     // ALWAYS serve the app on port 5000
