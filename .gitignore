@@ -9,7 +9,10 @@ pnpm-debug.log*
 .next/
 out/
 build/
+.build/
 dist/
+.turbo/
+.vercel/
 
 # Environment variables
 .env
@@ -119,3 +122,15 @@ prisma/migrations/
 
 # Test results
 results/
+
+# Certificates and SSL
+certs/
+*.pem
+*.key
+*.crt
+
+# Redis and database connection files
+test-redis-*.js
+
+# Documentation artifacts
+*.pdf
