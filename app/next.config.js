@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   images: {
     domains: ['i.scdn.co', 'mosaic.scdn.co'],
+  },
+  experimental: {
+    // Remove deprecated appDir option - it's now default in Next.js 14
   },
 }
 
