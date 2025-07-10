@@ -1,7 +1,7 @@
 modules = ["nodejs-20"]
 
 [deployment]
-run = ["sh", "-c", "cd app && npm ci --legacy-peer-deps && npm run build && npm start"]
+run = ["sh", "-c", "cd app && npm ci --legacy-peer-deps && npm run build && npm start -- --port 3000 --hostname 0.0.0.0"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
@@ -13,6 +13,8 @@ channel = "stable-24_05"
 
 [env]
 NODE_ENV = "production"
+PORT = "3000"
+HOSTNAME = "0.0.0.0"
 
 [packager]
 language = "nodejs"
