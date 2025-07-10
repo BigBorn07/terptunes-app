@@ -1,8 +1,35 @@
 modules = ["nodejs-20"]
 
+[deployment]
+run = ["sh", "-c", "cd app && npm ci --legacy-peer-deps && npm run build && npm start"]
+deploymentTarget = "cloudrun"
+
 [[ports]]
-localPort = 5000
+localPort = 3000
 externalPort = 80
 
 [nix]
 channel = "stable-24_05"
+
+[env]
+NODE_ENV = "production"
+
+[packager]
+language = "nodejs"
+
+[packager.features]
+packageSearch = true
+guessImports = true
+enablePackageInstall = true
+
+[languages.javascript]
+pattern = "**/{*.js,*.jsx,*.ts,*.tsx}"
+
+[languages.javascript.languageServer]
+start = "typescript-language-server --stdio"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[run]
+command = "cd app && npm run dev"
